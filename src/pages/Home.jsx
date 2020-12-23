@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect }  from 'react'
 import Categories from '../components/Categories';
 import Pizza from '../components/Pizza';
 import SortPopup from '../components/SortPopup';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategory } from '../redux/filterReducer';
+import { getPizzas } from '../redux/pizzaReducer';
 
 const Home = () => {
   
@@ -29,6 +30,11 @@ const Home = () => {
   const onSelectCategory = React.useCallback((index) => {
     dispatch(setCategory(index));
   },[]);
+
+
+  useEffect(() => {
+    dispatch(getPizzas());
+  }, []);
 
     return (
       <div className="container">
