@@ -35,13 +35,14 @@ export const toggleIsLoading = (isLoading) => ({
     isLoading
 })
 
-export const getPizzas = () => (dispatch) => {
+export const getPizzas = () => {
+  return (dispatch) => {
     dispatch(toggleIsLoading(true));
-    axios.get('http://localhost:3003/pizzas').then(({ data }) => {
-        dispatch(toggleIsLoading(false));
-        dispatch(setPizzas(data));
-    })
-}
-
+    axios.get("http://localhost:3003/pizzas").then(({ data }) => {
+      dispatch(toggleIsLoading(false));
+      dispatch(setPizzas(data));
+    });
+  };
+};
 
 export default pizzaReducer;

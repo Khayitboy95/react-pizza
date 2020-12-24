@@ -1,56 +1,54 @@
-import React, { useEffect }  from 'react'
+import React from 'react';
 import Categories from '../components/Categories';
 import Pizza from '../components/Pizza';
 import SortPopup from '../components/SortPopup';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { setCategory } from '../redux/filterReducer';
 import { getPizzas } from '../redux/pizzaReducer';
+import LoadingBlock from '../components/LoadingBlock';
 
-const Home = () => {
-  
-  const dispatch = useDispatch();
-  
-  const pizzas = useSelector(({ pizzas }) => pizzas.pizzas);
+const categoryNames = ['Все','Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+const sortItems = [
+  { name: 'популярности', type: 'popular', order: 'desc' },
+  { name: 'цене', type: 'price', order: 'desc' },
+  { name: 'алфавит', type: 'name', order: 'asc' },
+];
 
-  const categoryNames = [
-    "Все",
-    "Мясные",
-    "Вегетарианская",
-    "Гриль",
-    "Острые",
-    "Закрытые",
-  ];
+class Home extends React.Component {
 
-  const sortItems = [
-    {name:"популярности", type:"popular"},
-    {name:"цене", type:"price"},
-    {name:"алфавиту", type:"alphabet"}
-    ];
+    componentDidMount() {
+      this.props.getPizzas();
+    }
 
-  const onSelectCategory = React.useCallback((index) => {
-    dispatch(setCategory(index));
-  },[]);
+    onSelectCategory = (index) => {
+      this.props.setCategory(index);
+    }
 
-
-  useEffect(() => {
-    dispatch(getPizzas());
-  }, []);
-
-    return (
-      <div className="container">
-        <div className="content__top">
-          <Categories
-            onClickItem = {onSelectCategory}
-            items={categoryNames}
-          />
-          <SortPopup items={sortItems} />
+    render() {
+      return (
+        <div className="container">
+          <div className="content__top">
+            <Categories
+              onClickItem = {this.onSelectCategory}
+              items={categoryNames}
+            />
+            <SortPopup items={sortItems} />
+          </div>
+          <h2 className="content__title">Все пиццы</h2>
+          <div className="content__items">
+           {!this.props.isLoading ? this.props.pizzas.map(pizza => (<Pizza {...pizza} key={pizza.id} />)) 
+           : Array(10).fill(0).map((_,index) => <LoadingBlock key={index} /> ) }
+          </div>
         </div>
-        <h2 className="content__title">Все пиццы</h2>
-        <div className="content__items">
-         {pizzas && pizzas.map(pizza => (<Pizza {...pizza} key={pizza.id} />))}
-        </div>
-      </div>
-    );
+      );
+    }
 }
 
-export default Home;
+let mapStateToProps = (state) => {
+  return{
+      pizzas: state.pizzas.pizzas,
+      isLoading: state.pizzas.isLoading
+  }
+}
+
+export default connect(mapStateToProps, {getPizzas, setCategory})(Home);
