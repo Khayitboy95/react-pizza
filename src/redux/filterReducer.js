@@ -2,8 +2,11 @@ const SET_SORT_BY = 'SET_SORT_BY';
 const SET_CATEGORY = 'SET_CATEGORY';
 
 let initialState = {
-    sortBy: 'popular',
-    category: 0
+    sortBy: {
+        type: 'popular',
+        order: 'desc'
+    },
+    category: null
 }
 
 const filterReducer = (state = initialState, action) => {
@@ -24,9 +27,9 @@ const filterReducer = (state = initialState, action) => {
 }
 
 
-export const setSortBy = (sortBy) => ({
+export const setSortBy = ({type, order}) => ({
     type: SET_SORT_BY,
-    sortBy
+    sortBy:{type, order}
 });
 export const setCategory = (category) => ({
     type: SET_CATEGORY,

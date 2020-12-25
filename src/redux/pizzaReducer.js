@@ -35,10 +35,10 @@ export const toggleIsLoading = (isLoading) => ({
     isLoading
 })
 
-export const getPizzas = () => {
+export const getPizzas = (sortBy, category) => { 
   return (dispatch) => {
     dispatch(toggleIsLoading(true));
-    axios.get("http://localhost:3003/pizzas").then(({ data }) => {
+    axios.get(`http://localhost:3003/pizzas?${category !== null ? `category=${category}`: ''}&_sort=${sortBy.type}&_order=${sortBy.order}`).then(({ data }) => {
       dispatch(toggleIsLoading(false));
       dispatch(setPizzas(data));
     });

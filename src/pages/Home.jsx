@@ -3,11 +3,11 @@ import Categories from '../components/Categories';
 import Pizza from '../components/Pizza';
 import SortPopup from '../components/SortPopup';
 import { connect } from 'react-redux';
-import { setCategory } from '../redux/filterReducer';
+import { setCategory, setSortBy } from '../redux/filterReducer';
 import { getPizzas } from '../redux/pizzaReducer';
 import LoadingBlock from '../components/LoadingBlock';
 
-const categoryNames = ['Все','Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+const categoryNames = ['Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
 const sortItems = [
   { name: 'популярности', type: 'popular', order: 'desc' },
   { name: 'цене', type: 'price', order: 'desc' },
@@ -17,22 +17,28 @@ const sortItems = [
 class Home extends React.Component {
 
     componentDidMount() {
-      this.props.getPizzas();
+      this.props.getPizzas(this.props.sortBy.type, this.props.category);
     }
 
     onSelectCategory = (index) => {
       this.props.setCategory(index);
+      this.props.getPizzas(this.props.sortBy.type, index);
     }
-
+    onSelectSortItems = (obj) => {
+      this.props.setSortBy(obj);
+      this.props.getPizzas(obj.type, this.props.category);
+    }
+   
     render() {
       return (
         <div className="container">
           <div className="content__top">
             <Categories
+              activeCategory={this.props.category}
               onClickItem = {this.onSelectCategory}
               items={categoryNames}
             />
-            <SortPopup items={sortItems} />
+            <SortPopup setSortBy={this.onSelectSortItems} activeSort={this.props.sortBy.type} items={sortItems} />
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
@@ -47,8 +53,10 @@ class Home extends React.Component {
 let mapStateToProps = (state) => {
   return{
       pizzas: state.pizzas.pizzas,
-      isLoading: state.pizzas.isLoading
+      isLoading: state.pizzas.isLoading,
+      category: state.filters.category,
+      sortBy: state.filters.sortBy
   }
 }
 
-export default connect(mapStateToProps, {getPizzas, setCategory})(Home);
+export default connect(mapStateToProps, {getPizzas, setCategory, setSortBy})(Home);
