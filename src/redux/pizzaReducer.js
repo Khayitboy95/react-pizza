@@ -38,7 +38,7 @@ export const toggleIsLoading = (isLoading) => ({
 export const getPizzas = (sortBy, category) => { 
   return (dispatch) => {
     dispatch(toggleIsLoading(true));
-    axios.get(`http://localhost:3003/pizzas?${category !== null ? `category=${category}`: ''}&_sort=${sortBy.type}&_order=${sortBy.order}`).then(({ data }) => {
+    axios.get(`/pizzas?${category !== null ? `category=${category}`: ''}&_sort=${sortBy.type}&_order=${sortBy.order}`).then(({ data }) => {
       dispatch(toggleIsLoading(false));
       dispatch(setPizzas(data));
     });

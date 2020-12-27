@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { setCategory, setSortBy } from '../redux/filterReducer';
 import { getPizzas } from '../redux/pizzaReducer';
 import LoadingBlock from '../components/LoadingBlock';
+import { addPizzaToCart } from '../redux/cartReducer';
 
 const categoryNames = ['Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
 const sortItems = [
@@ -26,9 +27,13 @@ class Home extends React.Component {
     }
     onSelectSortItems = (obj) => {
       this.props.setSortBy(obj);
-      this.props.getPizzas(obj.type, this.props.category);
+      this.props.getPizzas(obj, this.props.category);
     }
    
+    onAddPizzaToCart = (obj) => {
+      this.props.addPizzaToCart(obj);
+    }
+
     render() {
       return (
         <div className="container">
@@ -42,7 +47,7 @@ class Home extends React.Component {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
-           {!this.props.isLoading ? this.props.pizzas.map(pizza => (<Pizza {...pizza} key={pizza.id} />)) 
+           {!this.props.isLoading ? this.props.pizzas.map(pizza => (<Pizza addedCount={this.props.items[pizza.id] && this.props.items[pizza.id].items.length} onAddToCart={this.onAddPizzaToCart}  {...pizza} key={pizza.id} />)) 
            : Array(10).fill(0).map((_,index) => <LoadingBlock key={index} /> ) }
           </div>
         </div>
@@ -55,8 +60,9 @@ let mapStateToProps = (state) => {
       pizzas: state.pizzas.pizzas,
       isLoading: state.pizzas.isLoading,
       category: state.filters.category,
-      sortBy: state.filters.sortBy
+      sortBy: state.filters.sortBy,
+      items: state.cart.items
   }
 }
 
-export default connect(mapStateToProps, {getPizzas, setCategory, setSortBy})(Home);
+export default connect(mapStateToProps, {getPizzas, setCategory, setSortBy, addPizzaToCart})(Home);
